@@ -1,0 +1,10 @@
+@use "../utility/function.scss" as *;
+
+.container {
+  width: 96.1805555556%;
+  max-width: rem(1385);
+}
+
+.flow > * + * {
+  margin-top: var(--flow-space, 1rem);
+}
