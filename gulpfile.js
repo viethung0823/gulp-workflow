@@ -5,6 +5,7 @@ const cssnano = require("cssnano");
 const autoprefixer = require("autoprefixer");
 const concat = require("gulp-concat");
 const terser = require("gulp-terser");
+const imagemin = require("gulp-imagemin");
 const plumber = require("gulp-plumber");
 const pump = require("pump");
 const cache = require("gulp-cache");
@@ -14,7 +15,7 @@ const browserSync = require("browser-sync").create();
 const sourceDir = "app/";
 const outputDir = "dist/";
 
-// html Task
+// HTMl Task
 function markup() {
   return pump([src(sourceDir.concat("*.html")), dest(outputDir)]);
 }
@@ -48,6 +49,19 @@ function scripts() {
   ]);
 }
 
+// Images Task
+function images() {
+  return pump([
+    src(sourceDir.concat("images/**/*.+(png|jpg|jpeg|gif|svg)")),
+    cache(
+      imagemin({
+        interlaced: true,
+      })
+    ),
+    dest(outputDir.concat("images")),
+  ]);
+}
+
 // Cleaning Task
 async function clean() {
   return Promise.resolve(del.sync("dist"));
@@ -76,6 +90,6 @@ function watchTask() {
 }
 
 // Run task
-const build = series(clean, parallel(markup, styles, scripts));
+const build = series(clean, parallel(markup, styles, scripts, images));
 exports.build = build;
 exports.default = series(markup, styles, scripts, browserSyncServe, watchTask);
